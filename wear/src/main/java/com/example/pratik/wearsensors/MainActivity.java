@@ -21,6 +21,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.wearable.activity.WearableActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +34,7 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-public class MainActivity extends Activity  implements
+public class MainActivity extends WearableActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         SensorEventListener{
@@ -66,20 +67,20 @@ public class MainActivity extends Activity  implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.round_activity_main);
 
-        buttonTap = findViewById(R.id.record);
-        status = findViewById(R.id.status);
+        buttonTap = (Button) findViewById(R.id.recordButton);
+        status = (TextView) findViewById(R.id.status);
 
         buttonTap.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if(!recordData){
-                    status.setText(statusText);
+                    status.setText("Recording");
                     recordData = true;
                     buttonTap.setText("Stop");
                 }
                 else{
-                    status.setText(statusText);
+                    status.setText("Ready...");
                     recordData = false;
                     buttonTap.setText("Start");
                 }

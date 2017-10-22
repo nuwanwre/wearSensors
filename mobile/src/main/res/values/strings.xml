@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">wearSensors</string>
+    <string name="Disclaimer">By tapping on Submit you are agreeing to collect your motion, and heart rate data for research purposes. This data in no way will be be used for any other purpose unless otherwise stated beforehand.</string>
 </resources>

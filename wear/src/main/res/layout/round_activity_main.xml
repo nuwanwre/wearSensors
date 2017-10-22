@@ -7,7 +7,7 @@
     tools:deviceIds="wear_round">
 
     <Button
-        android:id="@+id/record"
+        android:id="@+id/recordButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -19,7 +19,7 @@
         android:id="@+id/status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/record"
+        android:layout_above="@+id/recordButton"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="32dp"
         android:text="Ready..." />

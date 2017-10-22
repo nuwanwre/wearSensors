@@ -19,14 +19,13 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
     private static final String DATA_KEY = "data";
     private GoogleApiClient mGoogleApiClient;
 
-    private TextView sensorData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sensorData = (TextView) findViewById(R.id.sensorData);
+        //sensorData = (TextView) findViewById(R.id.sensorData);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -65,7 +64,7 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
             if (item.getUri().getPath().compareTo("/sensors") == 0) {
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                 String data = dataMap.getString(DATA_KEY);
-                sensorData.append("\n" + data);
+                // sensorData.append("\n" + data);
             }
 
 
