@@ -36,4 +36,36 @@ public class Student {
             System.out.println(e);
         }
     }
+
+    public void setAge(int a) {
+        age = a;
+    }
+
+    public void setHeight(float h) {
+        height = h;
+    }
+
+    public void setWeight(float w) {
+        weight = w;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Date getDoB() {
+        return DoB;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public float getWeight() {
+        return weight;
+    }
 }
