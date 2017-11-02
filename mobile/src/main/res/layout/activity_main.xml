@@ -54,7 +54,8 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="YYYY-MM-DD"
-                android:inputType="date" />
+                android:inputType="date"
+                android:maxLength="10" />
 
         </TableRow>
 

@@ -1,6 +1,8 @@
 package com.example.pratik.wearsensors;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -23,6 +25,19 @@ public class Student {
         age = 0;
         height = 0.0f;
         weight = 0.0f;
+    }
+
+    public Student(String Name, String DoB, String height, String weight) {
+        name = Name;
+        try{
+            this.DoB = dateFormat.parse(DoB);
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+        age = 0;
+        this.height = Float.parseFloat(height);
+        this.weight = Float.parseFloat(weight);
     }
 
     public void setName(String n) {

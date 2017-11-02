@@ -30,11 +30,17 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
 public class MainActivity extends WearableActivity implements
+        DataApi.DataListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         SensorEventListener{
@@ -63,6 +69,7 @@ public class MainActivity extends WearableActivity implements
     // Variables that are necessary to calculate the rotation
     private float[] rotation = {0, 0, 0};
 
+    private String init;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +79,8 @@ public class MainActivity extends WearableActivity implements
         buttonTap = (Button) findViewById(R.id.recordButton);
         status = (TextView) findViewById(R.id.status);
 
+        buttonTap.setEnabled(false);
+
         buttonTap.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if(!recordData){
@@ -80,8 +89,10 @@ public class MainActivity extends WearableActivity implements
                     buttonTap.setText("Stop");
                 }
                 else{
-                    status.setText("Ready...");
+                    status.setText(statusText);
                     recordData = false;
+                    sendMessage("Done");
+                    buttonTap.setEnabled(false);
                     buttonTap.setText("Start");
                 }
             }
@@ -146,16 +157,19 @@ public class MainActivity extends WearableActivity implements
             }
 
 
-            Log.d("Data: ", "X : " + Float.toString(linear_acceleration[0])
+            /* Log.d("Data: ", "X : " + Float.toString(linear_acceleration[0])
                             + "\tY : " + Float.toString(linear_acceleration[1])
                             + "\tZ : " + Float.toString(linear_acceleration[2])
                             + "\nX : " + Float.toString(rotation[0])
                             + "\tY : " + Float.toString(rotation[1])
                             + "\tZ : " + Float.toString(rotation[2]));
-
-            //sendMessage("X : " + Float.toString(linear_acceleration[0])
-            //        + "\tY : " + Float.toString(linear_acceleration[1])
-            //        + "\tZ : " + Float.toString(linear_acceleration[2]));
+             */
+            sendMessage(Float.toString(linear_acceleration[0])
+                    + "," + Float.toString(linear_acceleration[1])
+                    + "," + Float.toString(linear_acceleration[2])
+                    + "," + Float.toString(rotation[0])
+                    + "," + Float.toString(rotation[1])
+                    + "," + Float.toString(rotation[2]));
 
         }
 
@@ -173,11 +187,13 @@ public class MainActivity extends WearableActivity implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        Wearable.DataApi.addListener(mGoogleApiClient, this);
         Log.d("Wear: ", "Connected");
     }
 
     @Override
     public void onConnectionSuspended(int i) {
+        mGoogleApiClient.disconnect();
         Log.d("Wear : ", "Connection Suspended");
     }
 
@@ -197,7 +213,29 @@ public class MainActivity extends WearableActivity implements
     @Override
     protected void onPause() {
         super.onPause();
+        Wearable.DataApi.removeListener(mGoogleApiClient, this);
         mSensorManager.unregisterListener(this);
         mGoogleApiClient.disconnect();
+    }
+
+    @Override
+    public void onDataChanged(DataEventBuffer dataEvents) {
+        for (DataEvent event : dataEvents) {
+            // Log.d("SendMessage:Wear:", "DataChange!");
+
+            DataItem item = event.getDataItem();
+            if (item.getUri().getPath().compareTo("/init") == 0) {
+                DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                init = dataMap.getString(DATA_KEY);
+                // Log.d("Init :", data);
+                // sensorData.append("\n" + data);
+            }
+
+
+        }
+        if(!init.isEmpty()) {
+            buttonTap.setEnabled(true);
+            statusText = "Data Recorded for : " + init;
+        }
     }
 }
