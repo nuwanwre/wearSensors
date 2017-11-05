@@ -1,3 +1,8 @@
+/*
+   This class defines all the methods that needed to function the app interface.
+ */
+
+
 package com.example.pratik.wearsensors;
 
 import android.app.Activity;
@@ -36,6 +41,7 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
     private Student student;
 
     private ArrayList<String> sensorData = new ArrayList<String>();
+    private ArrayList<ArrayList<String>> sensorArray = new ArrayList<>();
 
     private networkClient client ;
     @Override
@@ -43,7 +49,7 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        client = new networkClient();
+        client = new networkClient(getApplicationContext());
 
         initControllers();
 
@@ -89,11 +95,11 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                client.connect();
+                //client.connect();
                 //Log.d("Validate:", "" + validateInput());
                 if(validateInput()) {
-                    sensorData.add(student.getName()+","+student.getDoB()+","+student.getHeight()+","+student.getWeight()+"\n");
-                    sensorData.add("aX,aY,aZ,gX,gY,gZ\n");
+                    sensorData.add(student.getName()+","+student.getDoB()+","+student.getHeight()+","+student.getWeight());
+                    sensorData.add("aX,aY,aZ,gX,gY,gZ");
                     sendMessage(student.getName());
                 }
             }
@@ -153,8 +159,12 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
                 if (data.equals("Done")){
                     // TODO : Reset UI and Arraylist
 
-                    if(client.sendData(sensorData)){
-                        sensorData.clear();
+                    if(!sensorData.isEmpty()){
+                       // sensorArray.add(sensorData);
+                       client.execute(sensorData);
+
+                        //sensorData.clear();
+                        sensorArray.clear();
                         name.setText(""); date.setText(""); height.setText(""); weight.setText("");
 
                         Toast toast  = Toast.makeText(getApplicationContext(), "Data Collection complete. Transferring to server.", Toast.LENGTH_LONG);
@@ -165,10 +175,12 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
                     }
 
 
+                }else {
+                    // sensorData.append("\n" + data);
+                    //Log.d("Data :", data);
+                    sensorData.add(data);
+                    //client.execute(data);
                 }
-                // sensorData.append("\n" + data);
-                //Log.d("Data :", data);
-                sensorData.add(data);
             }
 
 
