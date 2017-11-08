@@ -8,6 +8,8 @@
         - Heart rate
 
     All the strings are hardcoded. No support for multiple languages.
+
+    @author : nuwanwre
  */
 
 package com.example.pratik.wearsensors;
@@ -66,6 +68,8 @@ public class MainActivity extends WearableActivity implements
     private float[] gravity = {0, 0, 0};
     private float[] linear_acceleration = {0, 0, 0};
 
+    // Variables needed to calculate Heart rate
+    private float hRate = 0.0f;
     // Variables that are necessary to calculate the rotation
     private float[] rotation = {0, 0, 0};
 
@@ -144,6 +148,11 @@ public class MainActivity extends WearableActivity implements
                 linear_acceleration[2] = event.values[2] - gravity[2];
             }
 
+            if(event.sensor.getType() == Sensor.TYPE_HEART_RATE){
+                // Discard if Sensor status is unreliable or sensor is not contacting
+                hRate = event.values[0];
+            }
+
 
             if(event.sensor.getType() == Sensor.TYPE_GYROSCOPE){
                 // Gyroscope data : rad/s
@@ -169,7 +178,8 @@ public class MainActivity extends WearableActivity implements
                     + "," + Float.toString(linear_acceleration[2])
                     + "," + Float.toString(rotation[0])
                     + "," + Float.toString(rotation[1])
-                    + "," + Float.toString(rotation[2]));
+                    + "," + Float.toString(rotation[2])
+                    + "," + Float.toString(hRate));
 
         }
 
@@ -178,6 +188,7 @@ public class MainActivity extends WearableActivity implements
 
 
     private void sendMessage(String data){
+
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/sensors");
         putDataMapReq.getDataMap().putString(DATA_KEY, data);
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
@@ -207,6 +218,7 @@ public class MainActivity extends WearableActivity implements
         super.onResume();
         mSensorManager.registerListener(this, mLinAcc, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, mGyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mHeartRate, SensorManager.SENSOR_DELAY_NORMAL);
         mGoogleApiClient.connect();
     }
 
@@ -220,6 +232,8 @@ public class MainActivity extends WearableActivity implements
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
+
+
         for (DataEvent event : dataEvents) {
             // Log.d("SendMessage:Wear:", "DataChange!");
 
@@ -230,10 +244,13 @@ public class MainActivity extends WearableActivity implements
                 // Log.d("Init :", data);
                 // sensorData.append("\n" + data);
             }
-
-
         }
-        if(!init.isEmpty()) {
+
+        if (init.equals("Done")){
+            statusText = "Ready";
+            buttonTap.setEnabled(false);
+        }
+        else {
             buttonTap.setEnabled(true);
             statusText = "Data Recorded for : " + init;
         }

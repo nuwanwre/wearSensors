@@ -49,7 +49,7 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        client = new networkClient(getApplicationContext());
+
 
         initControllers();
 
@@ -98,8 +98,9 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
                 //client.connect();
                 //Log.d("Validate:", "" + validateInput());
                 if(validateInput()) {
+                    client = new networkClient(getApplicationContext());
                     sensorData.add(student.getName()+","+student.getDoB()+","+student.getHeight()+","+student.getWeight());
-                    sensorData.add("aX,aY,aZ,gX,gY,gZ");
+                    sensorData.add("aX,aY,aZ,gX,gY,gZ,hr");
                     sendMessage(student.getName());
                 }
             }
@@ -161,14 +162,16 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
 
                     if(!sensorData.isEmpty()){
                        // sensorArray.add(sensorData);
-                       client.execute(sensorData);
+                        //if(client.execute(sensorData)){
+                            client.execute(sensorData);
+                            //sensorData.clear();
+                            sensorArray.clear();
+                            name.setText(""); date.setText(""); height.setText(""); weight.setText("");
+                            sendMessage("Done");
+                            Toast toast  = Toast.makeText(getApplicationContext(), "Data Collection complete. Transferring to server.", Toast.LENGTH_LONG);
+                            toast.show();
+                        //}
 
-                        //sensorData.clear();
-                        sensorArray.clear();
-                        name.setText(""); date.setText(""); height.setText(""); weight.setText("");
-
-                        Toast toast  = Toast.makeText(getApplicationContext(), "Data Collection complete. Transferring to server.", Toast.LENGTH_LONG);
-                        toast.show();
                     }
                     else {
                         Log.d("Network", "Send Data Failed");

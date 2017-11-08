@@ -40,9 +40,14 @@ public class networkClient extends AsyncTask <ArrayList<String>, Void, Boolean> 
 
 
     protected Boolean doInBackground(ArrayList<String>... dataList) {
-        String save_url= "http://192.168.0.100/webapp/saveFile.php";
+        String save_url= "http://10.12.26.87/webapp/saveFile.php";
+
+        //String username = dataList[0].get(0).substring(0, dataList[0].get(0).indexOf(","));
+        //Log.d("user:", username);
+
 
         for (String item : dataList[0]) {
+            //username = item.substring(0, item.indexOf(","));
             stream += item + '\n';
             //Log.d("Item:", item);
         }
@@ -58,6 +63,8 @@ public class networkClient extends AsyncTask <ArrayList<String>, Void, Boolean> 
             OutputStream wr= httpURLConnection.getOutputStream();
             BufferedWriter bufferedWriter= new BufferedWriter(new OutputStreamWriter
                     (wr,"UTF-8"));
+
+
             String temp = URLEncoder.encode("sensor_stream","UTF-8")+"="+URLEncoder.encode(stream,"UTF-8");
 
             bufferedWriter.write(temp);
@@ -79,7 +86,7 @@ public class networkClient extends AsyncTask <ArrayList<String>, Void, Boolean> 
 
     public void connect() {
         try {
-            socket = new Socket("192.168.0.100", 80);
+            socket = new Socket("10.12.26.87", 80);
             dos = new DataOutputStream(socket.getOutputStream());
             Log.d("Network", Boolean.toString(socket.isConnected()));
         } catch (Exception e) {
@@ -114,9 +121,11 @@ public class networkClient extends AsyncTask <ArrayList<String>, Void, Boolean> 
         //Log.d("ANDRO_ASYNC",progress[0]);
     }
 
-    protected void onPostExecute(boolean result) {
+    protected boolean onPostExecute(boolean result) {
         //closeSocket();
-        Toast toast  = Toast.makeText(ctx, "Data transfer Complete", Toast.LENGTH_SHORT);
+        Toast toast  = Toast.makeText(ctx, "Data transfer Complete", Toast.LENGTH_LONG);
         toast.show();
+
+        return true;
     }
 }
