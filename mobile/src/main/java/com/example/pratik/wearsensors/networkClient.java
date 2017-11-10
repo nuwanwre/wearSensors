@@ -22,6 +22,11 @@ import java.util.ArrayList;
 
 public class networkClient extends AsyncTask <ArrayList<String>, Void, Boolean> {
 
+    final String save_url= "http://10.12.26.87/webapp/saveFile.php";
+
+    private HttpURLConnection httpURLConnection;
+    private URL url;
+
     Context ctx;
 
     private Socket socket;
@@ -40,7 +45,7 @@ public class networkClient extends AsyncTask <ArrayList<String>, Void, Boolean> 
 
 
     protected Boolean doInBackground(ArrayList<String>... dataList) {
-        String save_url= "http://10.12.26.87/webapp/saveFile.php";
+
 
         //String username = dataList[0].get(0).substring(0, dataList[0].get(0).indexOf(","));
         //Log.d("user:", username);
@@ -55,14 +60,15 @@ public class networkClient extends AsyncTask <ArrayList<String>, Void, Boolean> 
 
         try {
             //stream = dataList[0];
-            URL url = new URL(save_url);
-            HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+            url = new URL(save_url);
+            httpURLConnection = (HttpURLConnection)url.openConnection();
             httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setRequestProperty("Connection", "Keep-Alive");
             httpURLConnection.setDoOutput(true);
             OutputStream wr= httpURLConnection.getOutputStream();
             BufferedWriter bufferedWriter= new BufferedWriter(new OutputStreamWriter
                     (wr,"UTF-8"));
+           // String temp = URLEncoder.encode("sensor_stream","UTF-8")+"="+URLEncoder.encode(stream,"UTF-8");
 
 
             String temp = URLEncoder.encode("sensor_stream","UTF-8")+"="+URLEncoder.encode(stream,"UTF-8");
@@ -75,12 +81,14 @@ public class networkClient extends AsyncTask <ArrayList<String>, Void, Boolean> 
             wr.close();
             IS.close();
             //dos.writeUTF(stream);
-            return true;
+
         } catch (Exception e) {
             Log.d("Error", e.toString());
             return false;
         } finally {
             stream = "";
+            httpURLConnection.disconnect();
+            return true;
         }
     }
 

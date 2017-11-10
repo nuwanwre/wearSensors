@@ -6,6 +6,7 @@
 package com.example.pratik.wearsensors;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -170,6 +171,8 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
                             sendMessage("Done");
                             Toast toast  = Toast.makeText(getApplicationContext(), "Data Collection complete. Transferring to server.", Toast.LENGTH_LONG);
                             toast.show();
+
+                            restartApp();
                         //}
 
                     }
@@ -180,7 +183,7 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
 
                 }else {
                     // sensorData.append("\n" + data);
-                    //Log.d("Data :", data);
+                    Log.d("Data :", data);
                     sensorData.add(data);
                     //client.execute(data);
                 }
@@ -199,6 +202,12 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
                 Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
     }
 
+
+    private void restartApp(){
+        Intent intent =  getIntent();
+        finish();
+        startActivity(intent);
+    }
 
     @Override
     public void onConnectionSuspended(int i) {
