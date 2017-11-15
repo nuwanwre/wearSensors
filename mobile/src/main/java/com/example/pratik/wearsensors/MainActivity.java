@@ -158,8 +158,9 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
-        for (DataEvent event : dataEvents) {
 
+        for (DataEvent event : dataEvents) {
+            Log.d("Data :", "data in");
             DataItem item = event.getDataItem();
             if (item.getUri().getPath().compareTo("/sensors") == 0) {
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
@@ -216,6 +217,7 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
 
     private void appendList(ArrayList<String> data){
         for (String item : data) {
+            Log.d("append", item);
             sensorData.add(item);
         }
     }

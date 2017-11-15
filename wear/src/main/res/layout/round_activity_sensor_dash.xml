@@ -3,26 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:keepScreenOn="true"
-    tools:context="com.example.pratik.wearsensors.MainActivity"
+    tools:context="com.example.pratik.wearsensors.SensorDash"
     tools:deviceIds="wear_round">
 
+    <TextView
+        android:id="@+id/messageText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="54dp"
+        android:text="@string/message" />
+
     <Button
-        android:id="@+id/buttonStart"
+        android:id="@+id/buttonFour"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="37dp"
-        android:text="Start" />
-
-    <TextView
-        android:id="@+id/status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ready..."
-        android:layout_above="@+id/buttonFour"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="45dp" />
-
+        android:layout_marginBottom="41dp"
+        android:text="Button" />
 </RelativeLayout>
