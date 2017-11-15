@@ -41,6 +41,8 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import java.util.ArrayList;
+
 public class MainActivity extends WearableActivity implements
         DataApi.DataListener,
         GoogleApiClient.ConnectionCallbacks,
@@ -49,6 +51,8 @@ public class MainActivity extends WearableActivity implements
 
 
     private SensorManager mSensorManager;
+
+    private ArrayList<String> dataArray = new ArrayList<String>();
 
     private Sensor mLinAcc;                             // Sensor for Linear Acceleration
     private Sensor mGyroSensor;                         // Sensor for Gyroscope
@@ -75,6 +79,8 @@ public class MainActivity extends WearableActivity implements
 
     private String init;
 
+    private int count = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,17 +93,41 @@ public class MainActivity extends WearableActivity implements
 
         buttonTap.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if(!recordData){
-                    status.setText("Recording");
+
+                if(count == 0){
+                    status.setText("Keep walking...");
+                    buttonTap.setText("Tap to Run");
+                    dataArray.add("walk");
+                    count ++;
                     recordData = true;
+                }
+                else if(count == 1){
+                    dataArray.add("run");
+                    status.setText("Keep running...");
+                    buttonTap.setText("Tap to Open Door");
+                    count ++;
+                }
+                else if(count == 2){
+                    dataArray.add("open");
+                    status.setText("Open door");
+                    buttonTap.setText("Tap to Type");
+                    count ++;
+
+                }
+                else if(count == 3){
+                    dataArray.add("type");
+                    status.setText("Keep typing...");
                     buttonTap.setText("Stop");
+                    count ++;
                 }
                 else{
                     status.setText(statusText);
                     recordData = false;
-                    sendMessage("Done");
+                    sendMessage(dataArray);
+                    //sendMessage("Done");
                     buttonTap.setEnabled(false);
                     buttonTap.setText("Start");
+                    count = 0;
                 }
             }
         });
@@ -128,8 +158,10 @@ public class MainActivity extends WearableActivity implements
 
     @Override
     public final void onSensorChanged(SensorEvent event) {
+
         // Compute if only recording data is enabled
         if(recordData){
+
 
             if(event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION){
                 // Linear acceleration : m/s^2
@@ -173,7 +205,8 @@ public class MainActivity extends WearableActivity implements
                             + "\tY : " + Float.toString(rotation[1])
                             + "\tZ : " + Float.toString(rotation[2]));
              */
-            sendMessage(Float.toString(linear_acceleration[0])
+
+            dataArray.add(Float.toString(linear_acceleration[0])
                     + "," + Float.toString(linear_acceleration[1])
                     + "," + Float.toString(linear_acceleration[2])
                     + "," + Float.toString(rotation[0])
@@ -181,20 +214,23 @@ public class MainActivity extends WearableActivity implements
                     + "," + Float.toString(rotation[2])
                     + "," + Float.toString(hRate));
 
+
         }
 
     }
 
 
 
-    private void sendMessage(String data){
-
+    private void sendMessage(ArrayList<String> data){
+        Log.d("sendM", String.valueOf(data.size()));
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/sensors");
-        putDataMapReq.getDataMap().putString(DATA_KEY, data);
+        putDataMapReq.getDataMap().putStringArrayList(DATA_KEY, data);
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         PendingResult<DataApi.DataItemResult> pendingResult =
                 Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+        dataArray.clear();
     }
+
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -216,9 +252,9 @@ public class MainActivity extends WearableActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        mSensorManager.registerListener(this, mLinAcc, SensorManager.SENSOR_DELAY_FASTEST);
-        mSensorManager.registerListener(this, mGyroSensor, SensorManager.SENSOR_DELAY_FASTEST);
-        mSensorManager.registerListener(this, mHeartRate, SensorManager.SENSOR_DELAY_FASTEST);
+        mSensorManager.registerListener(this, mLinAcc, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mGyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mHeartRate, SensorManager.SENSOR_DELAY_NORMAL);
         mGoogleApiClient.connect();
     }
 
