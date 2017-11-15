@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class networkClient extends AsyncTask <ArrayList<String>, Void, Boolean> {
 
-    final String save_url= "http://10.12.26.87/webapp/saveFile.php";
+    final String save_url= "http://223.194.199.10/webapp/saveFile.php";
 
     private HttpURLConnection httpURLConnection;
     private URL url;

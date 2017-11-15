@@ -216,8 +216,8 @@ public class MainActivity extends WearableActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        mSensorManager.registerListener(this, mLinAcc, SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(this, mGyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mLinAcc, SensorManager.SENSOR_DELAY_FASTEST);
+        mSensorManager.registerListener(this, mGyroSensor, SensorManager.SENSOR_DELAY_FASTEST);
         mSensorManager.registerListener(this, mHeartRate, SensorManager.SENSOR_DELAY_FASTEST);
         mGoogleApiClient.connect();
     }
