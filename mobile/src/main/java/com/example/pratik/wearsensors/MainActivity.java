@@ -6,7 +6,6 @@
 package com.example.pratik.wearsensors;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -15,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,15 +39,12 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
     private EditText name, date, height, weight;
     private Button submit;
 
-    private int count = 0;
-
     private Student student;
 
     private ArrayList<String> sensorData = new ArrayList<String>();
     private ArrayList<ArrayList<String>> sensorArray = new ArrayList<>();
 
     private networkClient client ;
-    private String activity = "walk";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,7 +103,10 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
                     sensorData.add(student.getName()+","+student.getDoB()+","+student.getHeight()+","+student.getWeight());
                     sensorData.add("aX,aY,aZ,gX,gY,gZ,hr");
                     sendMessage(student.getName());
+<<<<<<< HEAD
                    // showDialog();
+=======
+>>>>>>> parent of e819f7d... Added selectio of activities
                 }
             }
         });
@@ -164,6 +162,7 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
             DataItem item = event.getDataItem();
             if (item.getUri().getPath().compareTo("/sensors") == 0) {
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+<<<<<<< HEAD
                 ArrayList<String> data = dataMap.getStringArrayList(DATA_KEY);
                 appendList(data);
                 Log.d("Data :", String.valueOf(sensorData.size()));
@@ -181,6 +180,37 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
                     restartApp();
                     //}
 
+=======
+                String data = dataMap.getString(DATA_KEY);
+                if (data.equals("Done")){
+                    // TODO : Reset UI and Arraylist
+
+                    if(!sensorData.isEmpty()){
+                       // sensorArray.add(sensorData);
+                        //if(client.execute(sensorData)){
+                            client.execute(sensorData);
+                            //sensorData.clear();
+                            sensorArray.clear();
+                            name.setText(""); date.setText(""); height.setText(""); weight.setText("");
+                            sendMessage("Done");
+                            Toast toast  = Toast.makeText(getApplicationContext(), "Data Collection complete. Transferring to server.", Toast.LENGTH_LONG);
+                            toast.show();
+
+                            restartApp();
+                        //}
+
+                    }
+                    else {
+                        Log.d("Network", "Send Data Failed");
+                    }
+
+
+                }else {
+                    // sensorData.append("\n" + data);
+                    Log.d("Data :", data);
+                    sensorData.add(data);
+                    //client.execute(data);
+>>>>>>> parent of e819f7d... Added selectio of activities
                 }
             }
 
@@ -213,6 +243,7 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
         Log.d("Phone : ", "Connection Suspended");
     }
 
+<<<<<<< HEAD
 
 
     private void appendList(ArrayList<String> data){
@@ -223,5 +254,6 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
     }
 
 
+=======
+>>>>>>> parent of e819f7d... Added selectio of activities
 }
-;

@@ -274,7 +274,11 @@ public class MainActivity extends WearableActivity implements
         super.onResume();
         mSensorManager.registerListener(this, mLinAcc, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, mGyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
+<<<<<<< HEAD
         mSensorManager.registerListener(this, mHeartRate, SensorManager.SENSOR_DELAY_NORMAL);
+=======
+        mSensorManager.registerListener(this, mHeartRate, SensorManager.SENSOR_DELAY_FASTEST);
+>>>>>>> parent of e819f7d... Added selectio of activities
         mGoogleApiClient.connect();
     }*/
 
