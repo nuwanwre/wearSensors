@@ -1,21 +1,18 @@
 /*
     This module listens to the following sensors on the Smartwatch and pushes data
     onto the connected phone.
-
     Sensors:
         - Linear Acc : X, Y, Z
         - Gyroscope
         - Heart rate
-
     All the strings are hardcoded. No support for multiple languages.
-
     @author : nuwanwre
  */
 
 package com.example.pratik.wearsensors;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -41,118 +38,75 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-import java.util.ArrayList;
-
 public class MainActivity extends WearableActivity implements
         DataApi.DataListener,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener/*,
-        SensorEventListener*/{
+        GoogleApiClient.OnConnectionFailedListener,
+        SensorEventListener{
 
 
     private SensorManager mSensorManager;
-    /*
-    dataBaseHelper dbHandler;
-    NewTrain newTrain=new NewTrain();
-    */
-    //private ArrayList<String> dataArray = new ArrayList<String>();
 
-    //private Sensor mLinAcc;                             // Sensor for Linear Acceleration
-    //private Sensor mGyroSensor;                         // Sensor for Gyroscope
-    //private Sensor mHeartRate;                          // Sensor for hear rate
+    private Sensor mLinAcc;                             // Sensor for Linear Acceleration
+    private Sensor mGyroSensor;                         // Sensor for Gyroscope
+    private Sensor mHeartRate;                          // Sensor for hear rate
 
 
-    private static GoogleApiClient mGoogleApiClient;           // Google API Client
+    private GoogleApiClient mGoogleApiClient;           // Google API Client
     private static final String DATA_KEY = "data";
 
     private Button buttonTap;                           // Button to start/stop recording
     private TextView status;                            // Label to update user about the status
 
-    //private String statusText = "";
-    //private boolean recordData = false;
+    private String statusText = "";
+    private boolean recordData = false;
 
     // Variables necessary to calculate linear acceleration
-    //private float[] gravity = {0, 0, 0};
-    //private float[] linear_acceleration = {0, 0, 0};
+    private float[] gravity = {0, 0, 0};
+    private float[] linear_acceleration = {0, 0, 0};
 
     // Variables needed to calculate Heart rate
-    //private float hRate = 0.0f;
+    private float hRate = 0.0f;
     // Variables that are necessary to calculate the rotation
-    //private float[] rotation = {0, 0, 0};
+    private float[] rotation = {0, 0, 0};
 
     private String init;
-
-    private int count = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.round_activity_main);
 
-        buttonTap = (Button) findViewById(R.id.buttonStart);
+        buttonTap = (Button) findViewById(R.id.recordButton);
         status = (TextView) findViewById(R.id.status);
 
         buttonTap.setEnabled(false);
-        /*
-        dbHandler = new dataBaseHelper(this, null, null, 1);
-        newTrain.NewUserDataSensor();
-        //**/
+
         buttonTap.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                if(v.getId()==R.id.buttonStart){
-                    Intent i= new Intent(v.getContext(), SensorDash.class);
-                    startActivity(i);
-                }
-
-                /*if(count == 0){
-                    dataArray.clear();
-                    status.setText("Keep walking...");
-                    buttonTap.setText("Tap to Run");
-                    dataArray.add("walk");
-                    count ++;
+                if(!recordData){
+                    status.setText("Recording");
                     recordData = true;
-                }
-                else if(count == 1){
-                    dataArray.add("run");
-                    status.setText("Keep running...");
-                    buttonTap.setText("Tap to Open Door");
-                    count ++;
-                }
-                else if(count == 2){
-                    dataArray.add("open");
-                    status.setText("Open door");
-                    buttonTap.setText("Tap to Type");
-                    count ++;
-
-                }
-                else if(count == 3){
-                    dataArray.add("type");
-                    status.setText("Keep typing...");
                     buttonTap.setText("Stop");
-                    count ++;
                 }
                 else{
-                status.setText(statusText);
+                    status.setText(statusText);
                     recordData = false;
-                    sendMessage(dataArray);
-                    //sendMessage("Done");
+                    sendMessage("Done");
                     buttonTap.setEnabled(false);
                     buttonTap.setText("Start");
-                    count = 0;
-                }*/
+                }
             }
         });
 
-        /*mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         // Register sensor or linear acceleration
         mLinAcc = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         // Register the gyroscope
         mGyroSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         // Register the Heartbeat sensor
-        mHeartRate = mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);*/
+        mHeartRate = mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -164,17 +118,15 @@ public class MainActivity extends WearableActivity implements
         Log.d("Wear: ", "Ready");
     }
 
-    /*@Override
+    @Override
     public final void onAccuracyChanged(Sensor sensor, int accuracy) {
         // Do something here if sensor accuracy changes.
-    }*/
+    }
 
-    /*@Override
+    @Override
     public final void onSensorChanged(SensorEvent event) {
-
         // Compute if only recording data is enabled
         if(recordData){
-
 
             if(event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION){
                 // Linear acceleration : m/s^2
@@ -191,16 +143,11 @@ public class MainActivity extends WearableActivity implements
                 linear_acceleration[0] = event.values[0] - gravity[0];
                 linear_acceleration[1] = event.values[1] - gravity[1];
                 linear_acceleration[2] = event.values[2] - gravity[2];
-
             }
 
-            /*if(event.sensor.getType() == Sensor.TYPE_HEART_RATE){
+            if(event.sensor.getType() == Sensor.TYPE_HEART_RATE){
                 // Discard if Sensor status is unreliable or sensor is not contacting
-
                 hRate = event.values[0];
-
-
-
             }
 
 
@@ -213,7 +160,6 @@ public class MainActivity extends WearableActivity implements
                 rotation[0] = event.values[0];
                 rotation[1] = event.values[1];
                 rotation[2] = event.values[2];
-
             }
 
 
@@ -224,8 +170,7 @@ public class MainActivity extends WearableActivity implements
                             + "\tY : " + Float.toString(rotation[1])
                             + "\tZ : " + Float.toString(rotation[2]));
              */
-
-            /*dataArray.add(Float.toString(linear_acceleration[0])
+            sendMessage(Float.toString(linear_acceleration[0])
                     + "," + Float.toString(linear_acceleration[1])
                     + "," + Float.toString(linear_acceleration[2])
                     + "," + Float.toString(rotation[0])
@@ -233,24 +178,20 @@ public class MainActivity extends WearableActivity implements
                     + "," + Float.toString(rotation[2])
                     + "," + Float.toString(hRate));
 
-
         }
-
-    }*/
-
-
-
-    public static void sendMessage(ArrayList<String> data){
-        Log.d("sendM", String.valueOf(data.size()));
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/sensors");
-        putDataMapReq.getDataMap().putStringArrayList(DATA_KEY, data);
-        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
-        PendingResult<DataApi.DataItemResult> pendingResult =
-                Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
-        //restartApp();
 
     }
 
+
+
+    private void sendMessage(String data){
+
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/sensors");
+        putDataMapReq.getDataMap().putString(DATA_KEY, data);
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+        PendingResult<DataApi.DataItemResult> pendingResult =
+                Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -269,24 +210,20 @@ public class MainActivity extends WearableActivity implements
         Log.d("Wear : ", "Connection Failed");
     }
 
-    /*@Override
+    @Override
     protected void onResume() {
         super.onResume();
-        mSensorManager.registerListener(this, mLinAcc, SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(this, mGyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
-<<<<<<< HEAD
-        mSensorManager.registerListener(this, mHeartRate, SensorManager.SENSOR_DELAY_NORMAL);
-=======
+        mSensorManager.registerListener(this, mLinAcc, SensorManager.SENSOR_DELAY_FASTEST);
+        mSensorManager.registerListener(this, mGyroSensor, SensorManager.SENSOR_DELAY_FASTEST);
         mSensorManager.registerListener(this, mHeartRate, SensorManager.SENSOR_DELAY_FASTEST);
->>>>>>> parent of e819f7d... Added selectio of activities
         mGoogleApiClient.connect();
-    }*/
+    }
 
     @Override
     protected void onPause() {
         super.onPause();
         Wearable.DataApi.removeListener(mGoogleApiClient, this);
-        //mSensorManager.unregisterListener(this);
+        mSensorManager.unregisterListener(this);
         mGoogleApiClient.disconnect();
     }
 
@@ -307,13 +244,12 @@ public class MainActivity extends WearableActivity implements
         }
 
         if (init.equals("Done")){
-            //statusText = "Ready";
+            statusText = "Ready";
             buttonTap.setEnabled(false);
         }
         else {
             buttonTap.setEnabled(true);
-            //statusText = "Data Recorded for : " + init;
+            statusText = "Data Recorded for : " + init;
         }
     }
-
 }

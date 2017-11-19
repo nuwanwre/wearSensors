@@ -6,6 +6,7 @@
 package com.example.pratik.wearsensors;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,12 +41,15 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
     private EditText name, date, height, weight;
     private Button submit;
 
+    private int count = 0;
+
     private Student student;
 
     private ArrayList<String> sensorData = new ArrayList<String>();
     private ArrayList<ArrayList<String>> sensorArray = new ArrayList<>();
 
     private networkClient client ;
+    private String activity = "walk";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,11 +107,9 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
                     client = new networkClient(getApplicationContext());
                     sensorData.add(student.getName()+","+student.getDoB()+","+student.getHeight()+","+student.getWeight());
                     sensorData.add("aX,aY,aZ,gX,gY,gZ,hr");
+                    sensorData.add(activity);
                     sendMessage(student.getName());
-<<<<<<< HEAD
-                   // showDialog();
-=======
->>>>>>> parent of e819f7d... Added selectio of activities
+                    showDialog();
                 }
             }
         });
@@ -156,47 +159,27 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
-
         for (DataEvent event : dataEvents) {
-            Log.d("Data :", "data in");
+
             DataItem item = event.getDataItem();
             if (item.getUri().getPath().compareTo("/sensors") == 0) {
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-<<<<<<< HEAD
-                ArrayList<String> data = dataMap.getStringArrayList(DATA_KEY);
-                appendList(data);
-                Log.d("Data :", String.valueOf(sensorData.size()));
-
-                if(!sensorData.isEmpty()){
-                    // sensorArray.add(sensorData);
-                    //if(client.execute(sensorData)){
-                    client.execute(sensorData);
-                    //sensorArray.clear();
-                    name.setText(""); date.setText(""); height.setText(""); weight.setText("");
-                    sendMessage("Done");
-                    //Toast toast  = Toast.makeText(getApplicationContext(), "Data Collection complete. Transferring to server.", Toast.LENGTH_LONG);
-                    //toast.show();
-
-                    restartApp();
-                    //}
-
-=======
                 String data = dataMap.getString(DATA_KEY);
                 if (data.equals("Done")){
                     // TODO : Reset UI and Arraylist
 
                     if(!sensorData.isEmpty()){
-                       // sensorArray.add(sensorData);
+                        // sensorArray.add(sensorData);
                         //if(client.execute(sensorData)){
-                            client.execute(sensorData);
-                            //sensorData.clear();
-                            sensorArray.clear();
-                            name.setText(""); date.setText(""); height.setText(""); weight.setText("");
-                            sendMessage("Done");
-                            Toast toast  = Toast.makeText(getApplicationContext(), "Data Collection complete. Transferring to server.", Toast.LENGTH_LONG);
-                            toast.show();
+                        client.execute(sensorData);
+                        //sensorData.clear();
+                        sensorArray.clear();
+                        name.setText(""); date.setText(""); height.setText(""); weight.setText("");
+                        sendMessage("Done");
+                        //Toast toast  = Toast.makeText(getApplicationContext(), "Data Collection complete. Transferring to server.", Toast.LENGTH_LONG);
+                        //toast.show();
 
-                            restartApp();
+                        restartApp();
                         //}
 
                     }
@@ -207,20 +190,16 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
 
                 }else {
                     // sensorData.append("\n" + data);
-                    Log.d("Data :", data);
+                    Log.d("Data :", String.valueOf(count));
+                    count ++;
                     sensorData.add(data);
                     //client.execute(data);
->>>>>>> parent of e819f7d... Added selectio of activities
                 }
             }
 
 
+        }
     }
-
-
-
-}
-
 
     private void sendMessage(String data){
         // Log.d("SendMessage:Phone:", "DataChange!");
@@ -243,17 +222,60 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
         Log.d("Phone : ", "Connection Suspended");
     }
 
-<<<<<<< HEAD
+
+    public void showDialog(){
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.activity_dialog);
+        dialog.setTitle("Select Activity");
+
+        dialog.setCancelable(false);
+
+        Button done = (Button) dialog.findViewById(R.id.done);
+        done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
 
 
-    private void appendList(ArrayList<String> data){
-        for (String item : data) {
-            Log.d("append", item);
-            sensorData.add(item);
-        }
+        dialog.show();
+
+
     }
 
+    public void onRadioButtonClicked(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
 
-=======
->>>>>>> parent of e819f7d... Added selectio of activities
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.walkRadio:
+                if (checked) {
+                    activity = "walk";
+                    sensorData.add(activity);
+                    break;
+                }
+            case R.id.runRadio:
+                if (checked) {
+                    activity = "run";
+                    sensorData.add(activity);
+                    break;
+                }
+            case R.id.typeRadio:
+                if (checked) {
+                    activity = "type";
+                    sensorData.add(activity);
+                    break;
+                }
+            case R.id.openRadio:
+                if (checked) {
+                    activity = "open";
+                    sensorData.add(activity);
+                    //break;
+                }
+        }
+
+        //Log.d("Dialog", activity);
+    }
 }
