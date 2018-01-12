@@ -107,9 +107,9 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
                     client = new networkClient(getApplicationContext());
                     sensorData.add(student.getName()+","+student.getDoB()+","+student.getHeight()+","+student.getWeight());
                     sensorData.add("aX,aY,aZ,gX,gY,gZ,hr");
-                    sensorData.add(activity);
-                    sendMessage(student.getName());
-                    showDialog();
+                    String temp =student.getName()+","+student.getDoB()+","+student.getHeight()+","+student.getWeight();
+                    sendMessage(temp);
+                   // showDialog();
                 }
             }
         });
@@ -164,47 +164,28 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
             DataItem item = event.getDataItem();
             if (item.getUri().getPath().compareTo("/sensors") == 0) {
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                //ArrayList<String> data = dataMap.getStringArrayList(DATA_KEY);
+               // appendList(data);
                 String data = dataMap.getString(DATA_KEY);
-                if (data.equals("Done")){
-                    // TODO : Reset UI and Arraylist
-
-                    if(!sensorData.isEmpty()){
-                        // sensorArray.add(sensorData);
-                        //if(client.execute(sensorData)){
-                        client.execute(sensorData);
-                        //sensorData.clear();
-                        sensorArray.clear();
-                        name.setText(""); date.setText(""); height.setText(""); weight.setText("");
-                        sendMessage("Done");
-                        //Toast toast  = Toast.makeText(getApplicationContext(), "Data Collection complete. Transferring to server.", Toast.LENGTH_LONG);
-                        //toast.show();
-
-                        restartApp();
-                        //}
-
-                    }
-                    else {
-                        Log.d("Network", "Send Data Failed");
-                    }
-
-
-                }else {
-                    // sensorData.append("\n" + data);
-                    Log.d("Data :", String.valueOf(count));
-                    count ++;
-                    sensorData.add(data);
-                    //client.execute(data);
+                if(data.equals("Done")){
+                    restartApp();
                 }
             }
 
 
-        }
     }
+
+
+
+}
+
 
     private void sendMessage(String data){
         // Log.d("SendMessage:Phone:", "DataChange!");
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/init");
+        Log.d("DATA SENT THROUGH PHONE:::::",data);
         putDataMapReq.getDataMap().putString(DATA_KEY, data);
+        Log.d("DATA KEY:::::::::::",DATA_KEY);
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         PendingResult<DataApi.DataItemResult> pendingResult =
                 Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
@@ -223,59 +204,13 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
     }
 
 
-    public void showDialog(){
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.activity_dialog);
-        dialog.setTitle("Select Activity");
 
-        dialog.setCancelable(false);
-
-        Button done = (Button) dialog.findViewById(R.id.done);
-        done.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.cancel();
-            }
-        });
-
-
-        dialog.show();
-
-
-    }
-
-    public void onRadioButtonClicked(View view) {
-        // Is the button now checked?
-        boolean checked = ((RadioButton) view).isChecked();
-
-        // Check which radio button was clicked
-        switch(view.getId()) {
-            case R.id.walkRadio:
-                if (checked) {
-                    activity = "walk";
-                    sensorData.add(activity);
-                    break;
-                }
-            case R.id.runRadio:
-                if (checked) {
-                    activity = "run";
-                    sensorData.add(activity);
-                    break;
-                }
-            case R.id.typeRadio:
-                if (checked) {
-                    activity = "type";
-                    sensorData.add(activity);
-                    break;
-                }
-            case R.id.openRadio:
-                if (checked) {
-                    activity = "open";
-                    sensorData.add(activity);
-                    //break;
-                }
+    private void appendList(ArrayList<String> data){
+        for (String item : data) {
+            sensorData.add(item);
         }
-
-        //Log.d("Dialog", activity);
     }
+
+
 }
+;

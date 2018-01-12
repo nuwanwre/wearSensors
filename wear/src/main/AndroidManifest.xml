@@ -3,15 +3,15 @@
     package="com.example.pratik.wearsensors">
 
     <uses-permission android:name="android.permission.BODY_SENSORS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-
     <uses-feature android:name="android.hardware.type.watch" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault">
         <activity
@@ -26,15 +26,15 @@
 
         <uses-library
             android:name="com.google.android.wearable"
-            android:required="false" />
+            android:required="true" />
+        <!--
+               Set to true if your app is Standalone, that is, it does not require the handheld
+               app to run.
+        -->
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
 
-        <activity
-            android:name=".SensorDash"
-            android:label="@string/title_activity_sensor_dash">
-            <intent-filter>
-
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>

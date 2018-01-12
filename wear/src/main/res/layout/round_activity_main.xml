@@ -14,15 +14,16 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="37dp"
+        android:onClick="onClick"
         android:text="Start" />
 
     <TextView
         android:id="@+id/status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Ready..."
         android:layout_above="@+id/recordButton"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="32dp"
-        android:text="Ready..." />
+        android:layout_marginBottom="45dp" />
 
 </RelativeLayout>
